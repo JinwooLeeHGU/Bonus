@@ -4,8 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CommandImplementation runner = new CommandImplementation();
+		ls runner = new ls();
 		runner.run(args);
 	}
-
 }
