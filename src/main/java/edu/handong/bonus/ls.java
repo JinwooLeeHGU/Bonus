@@ -8,10 +8,17 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import java.io.File;
 import java.lang.String;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class ls {
-	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ls runner = new ls();
+		runner.run(args);
+	}
 	String path;
+	boolean filePath;
 	boolean all;
 	boolean version;
 	boolean folder;
@@ -24,9 +31,18 @@ public class ls {
 		if(parseOptions(options, args)){
 			if (help){
 				printHelp(options);
+//				//String path = ls.class.getResource("").getPath();
+//				System.out.println("Current relative path is: " + System.getProperty("user.dir"));
 				return;
 			}
-			if(all) {
+			if(filePath) {
+				Path currentRelativePath = Paths.get("");
+				path = currentRelativePath.toAbsolutePath().toString();
+				System.out.println("Current absolute path of project Directory is: " + path);
+			}
+
+			if(all) {							
+				path = System.getProperty("user.dir");
 				File f = new File(path);
 				boolean checkDir = f.isDirectory();
 				
@@ -34,16 +50,21 @@ public class ls {
 					File []fileList=f.listFiles();
 					for(File tempFile : fileList) {
 						  if(tempFile.isFile()) {
-							  							// String tempPath=tempFile.getParent();
-							  						//	String tempFileName=tempFile.getName();
-						    							// System.out.println("Path="+tempPath);
-						    System.out.println("FileName="+tempFile.getAbsolutePath());
+	  						 	//String tempPath=tempFile.getParent();
+	  							//String tempFileName=tempFile.getName();
+	  							//System.out.println("Path="+tempPath);
+							  System.out.println(tempFile.getName());
+							  //System.out.println(tempFile.getAbsolutePath());
 						  }
+						  else {		
+							  System.out.println(tempFile.getName());
+							//System.out.println(tempFile.getAbsolutePath());
+						   }
 					}
 				}
 			}
-		}
-		if(version) {
+			
+			if(version) {
 			System.out.println("ls (GNU coreutils) 1.1\r\n" + 
 					"Copyright (C) 2019 ISEL, edu.\r\n" +  
 					"This is free software: you are free to change and redistribute it.\r\n" + 
@@ -53,21 +74,23 @@ public class ls {
 					"");
 		}
 		if(folder) {
+			path = System.getProperty("user.dir");
 			File f = new File(path);
 			boolean checkDir = f.isDirectory();
 			
 			if(checkDir) {
 				File []fileList=f.listFiles();
 				for(File tempFile : fileList) {
-					  if(tempFile.isFile()) {
-						  							// String tempPath=tempFile.getParent();
-						  						//	String tempFileName=tempFile.getName();
-					    							// System.out.println("Path="+tempPath);
-					    System.out.println(tempFile.getAbsolutePath());
+					  if(tempFile.isFile()) {						
+						  System.out.println(tempFile.getName() + " is a file");					  
 					  }
+					  else {		
+						  System.out.println(tempFile.getName() + " is a folder");
+					   }
 				}
 			}
 		}
+	}
 	}
 	private boolean parseOptions(Options options, String[] args) {
 		CommandLineParser parser = new DefaultParser();
@@ -75,12 +98,11 @@ public class ls {
 		try {
 			
 			CommandLine cmd = parser.parse(options, args);
-			System.out.println(1);
-			//all = cmd.hasOption("a");
-			version = cmd.hasOption("v");
+			all = cmd.hasOption("a"); //
+			filePath = cmd.hasOption("p");  //
+			version = cmd.hasOption("v");//
 			folder = cmd.hasOption("f");			
-			help = cmd.hasOption("h");
-			System.out.println("1");
+			help = cmd.hasOption("help");   //
 						
 		} catch (Exception e) {
 			System.out.println("ls: unknown option -- e\r\n" + 
@@ -94,32 +116,32 @@ public class ls {
 		
 	private Options createOptions() {
 		Options options = new Options();
-		
+				
 		options.addOption(Option.builder("a").longOpt("all")
 				.desc("do not ignore entries starting with .")
-				.hasArg()
+				//.hasArg()
 				.argName("List all files in directory")
-				.required()
+				//.required()
 				.build());		
 		options.addOption(Option.builder("v").longOpt("version")
 				.desc("output version information and exit")
-				.hasArg()
+				//.hasArg()
 				.argName("shows version of program")
-				.required()
+				//.required()
 				.build());
-		options.addOption(Option.builder("F").longOpt("folder")
-				.desc("append indicator (one of */=>@|) to entries")
-				.hasArg()
-				.argName("folder")
-				.required()
+		options.addOption(Option.builder("f").longOpt("folder")
+				.desc("shows whether contents in current directory are files or folders")
+				//.hasArg()
+				.argName("folder or file")
+				//.required()
 				.build());
-		options.addOption(Option.builder("l").longOpt("list")
-				.desc("list one file per line.  Avoid '\\n' with -q or -b")
-				.hasArg()
-				.argName("list")
-				.required()
+		options.addOption(Option.builder("p").longOpt("path")
+				.desc("Shows absolute path of current Project directory")
+				//.hasArg()
+				.argName("Path name to display")
+				//.required()
 				.build());
-		options.addOption(Option.builder("h").longOpt("help")
+		options.addOption(Option.builder().longOpt("help")
 				.desc("Help")
 		        .build()); 
 		
